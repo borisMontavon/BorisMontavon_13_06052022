@@ -1,45 +1,80 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState, AppThunk } from "../../app/store";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../../app/store";
+import { profilePost } from "../../services/profilePost";
 
+// Type of the states
 interface UserState {
-    // Export nécessaire ?
     firstName: string;
     lastName: string;
-    email: string;
-    password: string;
-    status: "loggedIn" | "loggedOut";
 }
 
+// Default values of states
 const initialState: UserState = {
-    firstName: "Tony",
-    lastName: "Stark",
-    email: "tony@stark.com",
-    password: "password123",
-    status: "loggedOut"
+    firstName: "",
+    lastName: ""
 };
+
+// Middleware that asynchronoulsy is sending a POST request to the API and returning a status and informations
+// Here we need to check if the token is right
+export const profileAsync = createAsyncThunk(
+    'user/profile',
+    async (token: string) => {
+      const response = await profilePost(token);
+
+      return response;
+    }
+);
 
 export const userSlice = createSlice({
     name: "user",
     initialState,
     reducers: {
-        setUserName: (state, action: PayloadAction<string>) => {
-            state.firstName = action.payload;
-            state.status = "loggedIn";
-        },
-        resetUserName: (state) => {
+        resetUser: (state) => {
             state.firstName = "";
-            state.status = "loggedOut";
+            state.lastName = "";
+            console.log(state.firstName);
         }
+    },
+    // Handle all the status case of the return value of the API
+    // Update the state accordingly
+    extraReducers: (builder) => {
+        builder
+        .addCase(profileAsync.fulfilled, (state, action) => {
+            switch (action.payload.status) {
+                case 200:
+                    state.firstName = action.payload.body.firstName;
+                    state.lastName = action.payload.body.lastName;
+                    break;
+                case 400:
+                    // state.isLoggedIn = false;
+                    // state.token = "";
+                    // state.hasErrorMessage = true;
+                    // state.errorMessage = "Username or password invalid";
+                    break;
+                case 500:
+                case 501:
+                    // state.isLoggedIn = false;
+                    // state.token = "";
+                    // state.hasErrorMessage = true;
+                    // state.errorMessage = "An error occured";
+                    break;
+                default:
+                    break;
+            }
+        })
+        .addCase(profileAsync.rejected, (state) => {
+            state.firstName = "";
+            state.lastName = "";
+        });
     },
 });
 
-export const { setUserName, resetUserName } = userSlice.actions;
+// Export of actions (reducer) that allow us to dispatch them
+export const { resetUser } = userSlice.actions;
 
+// Exports of the selector that allow us to access state
 export const selectUserFirstName = (state: RootState) => state.user.firstName;
 export const selectUserLastName = (state: RootState) => state.user.lastName;
-export const selectUserMail = (state: RootState) => state.user.email;
-export const selectUserPassword = (state: RootState) => state.user.password;
-export const selectUserStatus = (state: RootState) => state.user.status;
-export const selectLogginButton = (state: RootState) => state.user.status === "loggedIn" ? "Sign out" : "Sign in";
 
+// Export of the reducer for the store
 export default userSlice.reducer;

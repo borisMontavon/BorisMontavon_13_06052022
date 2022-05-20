@@ -186,6 +186,12 @@ body {
   font-size: 5rem;
 }
 
+.sign-in-error {
+  color: red;
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
 .input-remember {
   display: flex;
 }

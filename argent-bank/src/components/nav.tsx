@@ -1,26 +1,40 @@
 import { useAppSelector, useAppDispatch } from "../app/hooks";
-import { resetUserName, selectUserFirstName, selectLogginButton, selectUserStatus, setUserName } from "../features/user/userSlice";
+import { selectUserFirstName, resetUser } from "../features/user/userSlice";
+import { selectIsLoggedIn, resetToken } from "../features/token/tokenSlice";
 import { Link } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSignIn, faSignOut, faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import { faSignIn, faSignOut, faUserCircle, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import logo from "../assets/img/argentBankLogo.png";
 
 export function Nav() {
+    // State from Redux to display the error message, or to navigate to the next page if login is successful
     const user: string = useAppSelector(selectUserFirstName);
-    const sign: string = useAppSelector(selectUserStatus);
-    const logginButton: string = useAppSelector(selectLogginButton);
+    const isLoggedIn: boolean = useAppSelector(selectIsLoggedIn);
+
     const dispatch = useAppDispatch();
+
+    // This function reset the user firstname, lastname, token and logged state
+    // Called when already signed in and when the button "Sign out" is clicked
+    function logOut() {
+        dispatch(resetUser());
+        dispatch(resetToken());
+    }
 
     let logButton;
     let profilButton;
+    let signUpButton;
 
-    if (sign === "loggedIn") {
-        logButton = <Link className="main-nav-item" to="/" onClick={() => dispatch(resetUserName())}><FontAwesomeIcon icon={faSignOut} className="main-nav-item-logo" />{logginButton}</Link>
-        profilButton = <Link className="main-nav-item" to="/profil"><FontAwesomeIcon icon={faUserCircle} className="main-nav-item-logo" />{user}</Link>;
+    // If the login is successful, we render the name of the user and the "Sign out" button that will allow us to log out
+    if (isLoggedIn) {
+        signUpButton = undefined;
+        profilButton = <Link className="main-nav-item" to="user"><FontAwesomeIcon icon={faUserCircle} className="main-nav-item-logo" />{user}</Link>;
+        logButton = <Link className="main-nav-item" to="/" onClick={logOut}><FontAwesomeIcon icon={faSignOut} className="main-nav-item-logo" />Sign out</Link>
+    // Else, we render the same "Sign in" button and the "Sign up" button that will allow us to create a new user if necessary
     } else {
-        logButton = <Link className="main-nav-item" to="login" onClick={() => dispatch(setUserName("Tony"))}><FontAwesomeIcon icon={faSignIn} className="main-nav-item-logo" />{logginButton}</Link>
+        signUpButton = <Link className="main-nav-item" to="signUp"><FontAwesomeIcon icon={faUserPlus} className="main-nav-item-logo" />Sign up</Link>
         profilButton = undefined;
+        logButton = <Link className="main-nav-item" to="login"><FontAwesomeIcon icon={faSignIn} className="main-nav-item-logo" />Sign in</Link>
     }
 
     return (
@@ -34,6 +48,7 @@ export function Nav() {
                 <h1 className="sr-only">Argent Bank</h1>
             </Link>
             <div>
+                {signUpButton}
                 {profilButton}
                 {logButton}
             </div>

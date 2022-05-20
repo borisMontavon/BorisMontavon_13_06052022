@@ -6,23 +6,25 @@ type ResponseData = {
     status: number;
     message: string;
     body: {
-        token: string;
+        email: string,
+        firstName: string,
+        lastName: string,
+        createdAt: string,
+        updatedAt: string,
+        id: string
     };
 }
 
-// We send the email and the password the user typed in the login fields
-// If datas match in the database, we return the result sent by the API (status 200)
-// If not, we return the error status (400/500)
-export async function loginPost({email, password}: {email: string, password: string}) {
+// We send the token saved previously and check if it is correct
+// If yes, the user informations (firstname, lastname, email...) are sent by the API (status 200)
+// If not, error status are sent back (status 400/500)
+export async function profilePost(token: string) {
     try {
-        const response = await fetch(HOST + Routes.LOGIN_ROUTE, {
+        const response = await fetch(HOST + Routes.PROFILE_ROUTE, {
             method: "POST",
-            body: JSON.stringify({
-                email,
-                password
-            }),
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
             }
         });
 
@@ -39,7 +41,12 @@ export async function loginPost({email, password}: {email: string, password: str
             status: 501,
             message: "Sorry bro",
             body: {
-                token: ""
+                email: "",
+                firstName: "",
+                lastName: "",
+                createdAt: "",
+                updatedAt: "",
+                id: ""
             }
         };
     }

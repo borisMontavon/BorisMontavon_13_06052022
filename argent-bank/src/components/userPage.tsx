@@ -1,6 +1,30 @@
+import { useAppSelector, useAppDispatch } from "../app/hooks";
+import { selectUserFirstName, selectUserLastName, profileAsync } from "../features/user/userSlice";
+import { selectToken } from "../features/token/tokenSlice";
+
+import { useEffect } from "react";
+
 import { AccountSection } from "./accountSection";
 
 export function UserPage() {
+    // Get the state of the token to be able to get the user data by API
+    const token: string = useAppSelector(selectToken);
+
+    const dispatch = useAppDispatch();
+
+    // Fetch the user informations thanks to the token previously saved
+    useEffect(() => {
+        async function getData() {
+            dispatch(profileAsync(token));
+        }
+
+        getData();
+    }, [dispatch, token]);
+
+    // Get first and last name from the state to display it
+    const firstName: string = useAppSelector(selectUserFirstName);
+    const lastName: string = useAppSelector(selectUserLastName);
+
     const accountsData = [
         {
             "title": "Argent Bank Checking (x8349)",
@@ -26,7 +50,7 @@ export function UserPage() {
     return (
         <main className="main bg-dark">
             <div className="header">
-                <h1>Welcome back<br />Tony Jarvis!</h1>
+                <h1>Welcome back<br />{firstName} {lastName}!</h1>
                 <button className="edit-button">Edit Name</button>
             </div>
             <h2 className="sr-only">Accounts</h2>
