@@ -39,10 +39,12 @@ export const tokenSlice = createSlice({
         resetToken: (state) => {
             state.token = "";
             state.isLoggedIn = false;
-            console.log(state.isLoggedIn);
         },
         setHasErrorMessage: (state, action: PayloadAction<boolean>) => {
             state.hasErrorMessage = action.payload;
+        },
+        setIsLoggedIn: (state, action: PayloadAction<boolean>) => {
+            state.isLoggedIn = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -79,7 +81,7 @@ export const tokenSlice = createSlice({
 });
 
 // Export of actions (reducer) that allow us to dispatch them
-export const { setToken, resetToken, setHasErrorMessage } = tokenSlice.actions;
+export const { setToken, resetToken, setHasErrorMessage, setIsLoggedIn } = tokenSlice.actions;
 
 // Exports of the selector that allow us to access state
 export const selectToken = (state: RootState) => state.token.token;

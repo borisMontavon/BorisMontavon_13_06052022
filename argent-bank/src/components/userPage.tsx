@@ -1,5 +1,5 @@
 import { useAppSelector, useAppDispatch } from "../app/hooks";
-import { selectUserFirstName, selectUserLastName, profileAsync, selectEditMode, setEditMode } from "../features/user/userSlice";
+import { selectUserFirstName, selectUserLastName, selectProfileErrorMessage, selectProfileHasErrorMessage, profileAsync, selectEditMode, setEditMode } from "../features/user/userSlice";
 import { selectToken } from "../features/token/tokenSlice";
 
 import { useEffect } from "react";
@@ -12,6 +12,9 @@ export function UserPage() {
     const token: string = useAppSelector(selectToken);
     // Get the state of the editMode to check if we have to render the button or the inputs
     const isEditMode: boolean = useAppSelector(selectEditMode);
+    // Check if the API wasn't successful, and display the error message
+    const profileErrorMessage: string = useAppSelector(selectProfileErrorMessage);
+    const profileHasErrorMessage: boolean = useAppSelector(selectProfileHasErrorMessage);
 
     const dispatch = useAppDispatch();
 
@@ -62,6 +65,16 @@ export function UserPage() {
                     <h1>Welcome back !</h1>
                 </div>
                 <UserEdit firstName={firstName} lastName={lastName} token={token} />
+                <h2 className="sr-only">Accounts</h2>
+                {accounts}
+            </main>
+        )
+    }
+
+    if (profileHasErrorMessage) {
+        return (
+            <main className="main bg-dark">
+                <span className="profile-internal-error">{profileErrorMessage}</span>
                 <h2 className="sr-only">Accounts</h2>
                 {accounts}
             </main>

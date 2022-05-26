@@ -8,13 +8,21 @@ interface UserState {
     firstName: string;
     lastName: string;
     editMode: boolean;
+    editErrorMessage: string;
+    editHasErrorMessage: boolean;
+    profileErrorMessage: string;
+    profileHasErrorMessage: boolean;
 }
 
 // Default values of states
 const initialState: UserState = {
     firstName: "",
     lastName: "",
-    editMode: false
+    editMode: false,
+    editErrorMessage: "Please fill both first and last name",
+    editHasErrorMessage: false,
+    profileErrorMessage: "An error occured internally",
+    profileHasErrorMessage: false
 };
 
 // Middleware that is asynchronoulsy sending a POST request to the API and returning a status and informations
@@ -49,6 +57,9 @@ export const userSlice = createSlice({
         },
         setEditMode: (state, action: PayloadAction<boolean>) => {
             state.editMode = action.payload;
+        },
+        setEditHasErrorMessage: (state, action: PayloadAction<boolean>) => {
+            state.editHasErrorMessage = action.payload;
         }
     },
     // Handle all the status case of the return value of the API
@@ -60,19 +71,16 @@ export const userSlice = createSlice({
                 case 200:
                     state.firstName = action.payload.body.firstName;
                     state.lastName = action.payload.body.lastName;
+                    state.profileHasErrorMessage = false;
+                    state.profileErrorMessage = "";
                     break;
                 case 400:
-                    // state.isLoggedIn = false;
-                    // state.token = "";
-                    // state.hasErrorMessage = true;
-                    // state.errorMessage = "Username or password invalid";
+                    // deco
                     break;
                 case 500:
                 case 501:
-                    // state.isLoggedIn = false;
-                    // state.token = "";
-                    // state.hasErrorMessage = true;
-                    // state.errorMessage = "An error occured";
+                    state.profileHasErrorMessage = true;
+                    state.profileErrorMessage = "Internal Server Error";
                     break;
                 default:
                     break;
@@ -88,19 +96,17 @@ export const userSlice = createSlice({
                     state.firstName = action.payload.body.firstName;
                     state.lastName = action.payload.body.lastName;
                     state.editMode = false;
+                    state.editHasErrorMessage = false;
+                    state.editErrorMessage = "Please fill both first and last name";
                     break;
                 case 400:
-                    // state.isLoggedIn = false;
-                    // state.token = "";
-                    // state.hasErrorMessage = true;
-                    // state.errorMessage = "Username or password invalid";
+                    state.editHasErrorMessage = true;
+                    state.editErrorMessage = "Invalid fields";
                     break;
                 case 500:
                 case 501:
-                    // state.isLoggedIn = false;
-                    // state.token = "";
-                    // state.hasErrorMessage = true;
-                    // state.errorMessage = "An error occured";
+                    state.editHasErrorMessage = true;
+                    state.editErrorMessage = "Internal error";
                     break;
                 default:
                     break;
@@ -110,12 +116,16 @@ export const userSlice = createSlice({
 });
 
 // Export of actions (reducer) that allow us to dispatch them
-export const { resetUser, setEditMode } = userSlice.actions;
+export const { resetUser, setEditMode, setEditHasErrorMessage } = userSlice.actions;
 
 // Exports of the selector that allow us to access state
 export const selectUserFirstName = (state: RootState) => state.user.firstName;
 export const selectUserLastName = (state: RootState) => state.user.lastName;
 export const selectEditMode = (state: RootState) => state.user.editMode;
+export const selectEditErrorMessage = (state: RootState) => state.user.editErrorMessage;
+export const selectEditHasErrorMessage = (state: RootState) => state.user.editHasErrorMessage;
+export const selectProfileHasErrorMessage = (state: RootState) => state.user.profileHasErrorMessage;
+export const selectProfileErrorMessage = (state: RootState) => state.user.profileErrorMessage;
 
 // Export of the reducer for the store
 export default userSlice.reducer;
