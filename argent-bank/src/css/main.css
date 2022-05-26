@@ -307,6 +307,14 @@ body {
   margin-bottom: 2rem;
 }
 
+.profile-internal-error {
+  color: red;
+  font-size : 2rem;
+  margin: 2rem 0;
+  display: flex;
+  justify-content: center;
+}
+
 .transaction-button {
   display: block;
   width: 100%;

@@ -1,5 +1,5 @@
-import { useAppDispatch } from "../app/hooks";
-import { updateProfileAsync, setEditMode } from "../features/user/userSlice";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { selectEditErrorMessage, selectEditHasErrorMessage, updateProfileAsync, setEditMode, setEditHasErrorMessage } from "../features/user/userSlice";
 
 import { useState } from "react";
 
@@ -10,7 +10,10 @@ export function UserEdit({firstName, lastName, token}: {firstName: string, lastN
     // Or to reset them if we cancel the operation
     const [newFirstName, setNewFirstName] = useState(firstName);
     const [newLastName, setNewLastName] = useState(lastName);
-    const [errorMessage, setErrorMessage] = useState(false);
+
+    // State from Redux to check if the update is successful
+    const errorMessage: string = useAppSelector(selectEditErrorMessage);
+    const hasErrorMessage: boolean = useAppSelector(selectEditHasErrorMessage);
 
     const dispatch = useAppDispatch();
 
@@ -22,14 +25,13 @@ export function UserEdit({firstName, lastName, token}: {firstName: string, lastN
     function updateProfile() {
         if (newFirstName !== "" && newLastName !== "") {
             dispatch(updateProfileAsync({firstName: newFirstName, lastName: newLastName, token: token}));
-            setErrorMessage(false);
         } else {
-            setErrorMessage(true);
+            dispatch(setEditHasErrorMessage(true));
         }
     }
 
-    if (errorMessage) {
-        inputsErrorMessage = <span className="edit-error">Please fill both first and last name</span>;
+    if (hasErrorMessage) {
+        inputsErrorMessage = <span className="edit-error">{errorMessage}</span>;
     } else {
         inputsErrorMessage = null;
     }

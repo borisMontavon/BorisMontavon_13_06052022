@@ -1,6 +1,7 @@
 import { useAppSelector, useAppDispatch } from "../app/hooks";
 import { selectUserFirstName, resetUser } from "../features/user/userSlice";
-import { selectIsLoggedIn, resetToken } from "../features/token/tokenSlice";
+import { selectIsLoggedIn, resetToken, setIsLoggedIn } from "../features/token/tokenSlice";
+import { setIsSuccessful } from "../features/signUp/signUpSlice";
 import { Link } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -19,6 +20,8 @@ export function Nav() {
     function logOut() {
         dispatch(resetUser());
         dispatch(resetToken());
+        dispatch(setIsLoggedIn(false));
+        dispatch(setIsSuccessful(false));
     }
 
     let logButton;
