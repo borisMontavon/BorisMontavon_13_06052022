@@ -1,5 +1,5 @@
 import { useAppSelector, useAppDispatch } from "../app/hooks";
-import { selectErrorMessage, selectIsLoggedIn, selectHasErrorMessage, loginAsync, setHasErrorMessage } from "../features/token/tokenSlice";
+import { selectErrorMessage, selectToken, selectHasErrorMessage, loginAsync, setHasErrorMessage } from "../features/token/tokenSlice";
 
 import { useState, useEffect } from "react";
 
@@ -11,10 +11,11 @@ export function LoginPage() {
     // Internal state of the component, to handle the field value of inputs
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
+    const [remember, setRemember] = useState(false);
 
     // State from Redux to display the error message, or to navigate to the next page if login is successful
     const errorMessage: string = useAppSelector(selectErrorMessage);
-    const isLoggedIn: boolean = useAppSelector(selectIsLoggedIn);
+    const token: string = useAppSelector(selectToken);
     const hasErrorMessage: boolean = useAppSelector(selectHasErrorMessage);
 
     const dispatch = useAppDispatch();
@@ -34,7 +35,7 @@ export function LoginPage() {
         e.preventDefault();
         e.stopPropagation();
 
-        dispatch(loginAsync({email: userName, password: password}));
+        dispatch(loginAsync({email: userName, password: password, remember: remember}));
     }
 
     // Login not successful, we display the error message depending on the error status we got back
@@ -47,7 +48,7 @@ export function LoginPage() {
     }
 
     // Login successful
-    if (isLoggedIn) {
+    if (token) {
         return (
             <Navigate to="/user" />
         );
@@ -69,7 +70,7 @@ export function LoginPage() {
                         <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                     </div>
                     <div className="input-remember">
-                        <input type="checkbox" id="remember-me" />
+                        <input type="checkbox" id="remember-me" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
                         <label htmlFor="remember-me">Remember me</label>
                     </div>
                     <button className="sign-in-button" type="submit">

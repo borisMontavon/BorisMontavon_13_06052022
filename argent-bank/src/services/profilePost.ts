@@ -30,8 +30,6 @@ export async function profilePost(token: string) {
 
         const result = (await response.json()) as ResponseData;
 
-        console.log("result is: ", JSON.stringify(result, null, 4));
-
         return result;
     } catch (error) {
         // Another case of error, if database is not running or disconnected during the process for example

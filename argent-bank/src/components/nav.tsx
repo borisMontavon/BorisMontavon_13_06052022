@@ -1,6 +1,6 @@
 import { useAppSelector, useAppDispatch } from "../app/hooks";
 import { selectUserFirstName, resetUser } from "../features/user/userSlice";
-import { selectIsLoggedIn, resetToken, setIsLoggedIn } from "../features/token/tokenSlice";
+import { resetToken, selectToken } from "../features/token/tokenSlice";
 import { setIsSuccessful } from "../features/signUp/signUpSlice";
 import { Link } from "react-router-dom";
 
@@ -11,7 +11,7 @@ import logo from "../assets/img/argentBankLogo.png";
 export function Nav() {
     // State from Redux to display the error message, or to navigate to the next page if login is successful
     const user: string = useAppSelector(selectUserFirstName);
-    const isLoggedIn: boolean = useAppSelector(selectIsLoggedIn);
+    const token: string = useAppSelector(selectToken);
 
     const dispatch = useAppDispatch();
 
@@ -20,7 +20,6 @@ export function Nav() {
     function logOut() {
         dispatch(resetUser());
         dispatch(resetToken());
-        dispatch(setIsLoggedIn(false));
         dispatch(setIsSuccessful(false));
     }
 
@@ -29,7 +28,7 @@ export function Nav() {
     let signUpButton;
 
     // If the login is successful, we render the name of the user and the "Sign out" button that will allow us to log out
-    if (isLoggedIn) {
+    if (token) {
         signUpButton = undefined;
         profilButton = <Link className="main-nav-item" to="user"><FontAwesomeIcon icon={faUserCircle} className="main-nav-item-logo" />{user}</Link>;
         logButton = <Link className="main-nav-item" to="/" onClick={logOut}><FontAwesomeIcon icon={faSignOut} className="main-nav-item-logo" />Sign out</Link>

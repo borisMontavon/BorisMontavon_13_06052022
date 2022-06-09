@@ -31,8 +31,6 @@ export async function signUpPost({email, password, firstName, lastName}: {email:
 
         const result = (await response.json()) as ResponseData;
 
-        console.log("result is: ", JSON.stringify(result, null, 4));
-
         return result;
     } catch (error) {
         // Another case of error, if database is not running or disconnected during the process for example
