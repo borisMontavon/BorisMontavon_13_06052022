@@ -2,16 +2,14 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { profilePost } from "../../services/profilePost";
 import { updateProfilePut } from "../../services/updateProfilePut";
+import { ErrorState } from "../errorState";
 
 // Type of the states
-interface UserState {
+interface UserState extends ErrorState {
     firstName: string;
     lastName: string;
     editMode: boolean;
-    editErrorMessage: string;
-    editHasErrorMessage: boolean;
-    profileErrorMessage: string;
-    profileHasErrorMessage: boolean;
+    isTokenValid: boolean;
 }
 
 // Default values of states
@@ -19,10 +17,9 @@ const initialState: UserState = {
     firstName: "",
     lastName: "",
     editMode: false,
-    editErrorMessage: "Please fill both first and last name",
-    editHasErrorMessage: false,
-    profileErrorMessage: "An error occured internally",
-    profileHasErrorMessage: false
+    errorMessage: "",
+    hasErrorMessage: false,
+    isTokenValid: true
 };
 
 // Middleware that is asynchronoulsy sending a POST request to the API and returning a status and informations
@@ -35,7 +32,6 @@ export const profileAsync = createAsyncThunk(
       return response;
     }
 );
-
 
 // Middleware that is asynchronoulsy sending a PUT request to update the first and last name of the user
 export const updateProfileAsync = createAsyncThunk(
@@ -59,7 +55,10 @@ export const userSlice = createSlice({
             state.editMode = action.payload;
         },
         setEditHasErrorMessage: (state, action: PayloadAction<boolean>) => {
-            state.editHasErrorMessage = action.payload;
+            state.hasErrorMessage = action.payload;
+        },
+        resetTokenValidity: (state) => {
+            state.isTokenValid = true;
         }
     },
     // Handle all the status case of the return value of the API
@@ -71,16 +70,17 @@ export const userSlice = createSlice({
                 case 200:
                     state.firstName = action.payload.body.firstName;
                     state.lastName = action.payload.body.lastName;
-                    state.profileHasErrorMessage = false;
-                    state.profileErrorMessage = "";
+                    state.hasErrorMessage = false;
+                    state.errorMessage = "";
+                    state.isTokenValid = true;
                     break;
-                case 400:
-                    // deco
+                case 401:
+                    state.isTokenValid = false;
                     break;
                 case 500:
                 case 501:
-                    state.profileHasErrorMessage = true;
-                    state.profileErrorMessage = "Internal Server Error";
+                    state.hasErrorMessage = true;
+                    state.errorMessage = "Internal Server Error";
                     break;
                 default:
                     break;
@@ -96,36 +96,38 @@ export const userSlice = createSlice({
                     state.firstName = action.payload.body.firstName;
                     state.lastName = action.payload.body.lastName;
                     state.editMode = false;
-                    state.editHasErrorMessage = false;
-                    state.editErrorMessage = "Please fill both first and last name";
+                    state.hasErrorMessage = false;
+                    state.errorMessage = "Please fill both first and last name";
                     break;
                 case 400:
-                    state.editHasErrorMessage = true;
-                    state.editErrorMessage = "Invalid fields";
+                    state.hasErrorMessage = true;
+                    state.errorMessage = "Invalid fields";
                     break;
                 case 500:
                 case 501:
-                    state.editHasErrorMessage = true;
-                    state.editErrorMessage = "Internal error";
+                    state.hasErrorMessage = true;
+                    state.errorMessage = "Internal error";
                     break;
                 default:
                     break;
             }
         })
+        .addCase(updateProfileAsync.rejected, () => {
+            console.log("Your profile update was rejected.");
+        })
     },
 });
 
 // Export of actions (reducer) that allow us to dispatch them
-export const { resetUser, setEditMode, setEditHasErrorMessage } = userSlice.actions;
+export const { resetUser, setEditMode, setEditHasErrorMessage, resetTokenValidity } = userSlice.actions;
 
 // Exports of the selector that allow us to access state
 export const selectUserFirstName = (state: RootState) => state.user.firstName;
 export const selectUserLastName = (state: RootState) => state.user.lastName;
 export const selectEditMode = (state: RootState) => state.user.editMode;
-export const selectEditErrorMessage = (state: RootState) => state.user.editErrorMessage;
-export const selectEditHasErrorMessage = (state: RootState) => state.user.editHasErrorMessage;
-export const selectProfileHasErrorMessage = (state: RootState) => state.user.profileHasErrorMessage;
-export const selectProfileErrorMessage = (state: RootState) => state.user.profileErrorMessage;
+export const selectErrorMessage = (state: RootState) => state.user.errorMessage;
+export const selectHasErrorMessage = (state: RootState) => state.user.hasErrorMessage;
+export const selectIsTokenValid = (state: RootState) => state.user.isTokenValid;
 
 // Export of the reducer for the store
 export default userSlice.reducer;

@@ -1,20 +1,21 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { loginPost } from "../../services/loginPost";
+import { ErrorState } from "../errorState";
+import Cookies from 'universal-cookie';
 
 // Type of the states
-interface TokenState {
+interface TokenState extends ErrorState {
     token: string;
-    errorMessage: string;
-    isLoggedIn: boolean;
-    hasErrorMessage: boolean;
 }
+
+const cookies = new Cookies();
+const token = cookies.get("jwtToken");
 
 // Default values of states
 const initialState: TokenState = {
-    token: "",
+    token: token,
     errorMessage: "",
-    isLoggedIn: false,
     hasErrorMessage: false
 };
 
@@ -22,8 +23,10 @@ const initialState: TokenState = {
 // Here we need to check if the email and the password typed in the form are matching in the database
 export const loginAsync = createAsyncThunk(
     'token/login',
-    async ({email, password}: {email: string, password: string}) => {
+    async ({email, password, remember}: {email: string, password: string, remember: boolean}) => {
       const response = await loginPost({email, password});
+      
+      response.remember = remember;
 
       return response;
     }
@@ -38,13 +41,10 @@ export const tokenSlice = createSlice({
         },
         resetToken: (state) => {
             state.token = "";
-            state.isLoggedIn = false;
+            cookies.remove("jwtToken");
         },
         setHasErrorMessage: (state, action: PayloadAction<boolean>) => {
             state.hasErrorMessage = action.payload;
-        },
-        setIsLoggedIn: (state, action: PayloadAction<boolean>) => {
-            state.isLoggedIn = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -54,18 +54,25 @@ export const tokenSlice = createSlice({
             // Update the state accordingly
             switch (action.payload.status) {
                 case 200:
-                    state.isLoggedIn = true;
                     state.token = action.payload.body.token;
+
+                    if (action.payload.remember) {
+                        const date = new Date();
+
+                        date.setDate(date.getDate() + 1);
+
+                        cookies.set("jwtToken", state.token, { path: "/", expires: date });
+                    } else {
+                        cookies.set("jwtToken", state.token, { path: "/" });
+                    }
                     break;
                 case 400:
-                    state.isLoggedIn = false;
                     state.token = "";
                     state.hasErrorMessage = true;
                     state.errorMessage = "Username or password invalid";
                     break;
                 case 500:
                 case 501:
-                    state.isLoggedIn = false;
                     state.token = "";
                     state.hasErrorMessage = true;
                     state.errorMessage = "An error occured";
@@ -81,12 +88,11 @@ export const tokenSlice = createSlice({
 });
 
 // Export of actions (reducer) that allow us to dispatch them
-export const { setToken, resetToken, setHasErrorMessage, setIsLoggedIn } = tokenSlice.actions;
+export const { setToken, resetToken, setHasErrorMessage } = tokenSlice.actions;
 
 // Exports of the selector that allow us to access state
 export const selectToken = (state: RootState) => state.token.token;
 export const selectErrorMessage = (state: RootState) => state.token.errorMessage;
-export const selectIsLoggedIn = (state: RootState) => state.token.isLoggedIn;
 export const selectHasErrorMessage = (state: RootState) => state.token.hasErrorMessage;
 
 // Export of the reducer for the store

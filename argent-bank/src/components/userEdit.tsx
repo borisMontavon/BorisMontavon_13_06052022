@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { selectEditErrorMessage, selectEditHasErrorMessage, updateProfileAsync, setEditMode, setEditHasErrorMessage } from "../features/user/userSlice";
+import { selectErrorMessage, selectHasErrorMessage, updateProfileAsync, setEditMode, setEditHasErrorMessage } from "../features/user/userSlice";
 
 import { useState } from "react";
 
@@ -12,8 +12,8 @@ export function UserEdit({firstName, lastName, token}: {firstName: string, lastN
     const [newLastName, setNewLastName] = useState(lastName);
 
     // State from Redux to check if the update is successful
-    const errorMessage: string = useAppSelector(selectEditErrorMessage);
-    const hasErrorMessage: boolean = useAppSelector(selectEditHasErrorMessage);
+    const errorMessage: string = useAppSelector(selectErrorMessage);
+    const hasErrorMessage: boolean = useAppSelector(selectHasErrorMessage);
 
     const dispatch = useAppDispatch();
 

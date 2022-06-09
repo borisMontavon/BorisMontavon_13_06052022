@@ -1,9 +1,10 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import { signUpPost } from "../../services/signUpPost";
+import { signUpPost } from "../../services/signUpPost"; 
+import { ErrorState } from "../errorState";
 
 // Type of the states
-interface SignUpState {
+interface SignUpState extends ErrorState {
     isSuccessful: boolean,
     hasErrorMessage: boolean,
     errorMessage: string

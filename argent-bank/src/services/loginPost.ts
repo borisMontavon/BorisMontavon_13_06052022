@@ -8,6 +8,7 @@ type ResponseData = {
     body: {
         token: string;
     };
+    remember: boolean;
 }
 
 // We send the email and the password the user typed in the login fields
@@ -28,8 +29,6 @@ export async function loginPost({email, password}: {email: string, password: str
 
         const result = (await response.json()) as ResponseData;
 
-        console.log("result is: ", JSON.stringify(result, null, 4));
-
         return result;
     } catch (error) {
         // Another case of error, if database is not running or disconnected during the process for example
@@ -40,7 +39,8 @@ export async function loginPost({email, password}: {email: string, password: str
             message: "Sorry bro",
             body: {
                 token: ""
-            }
+            },
+            remember: false
         };
     }
 }

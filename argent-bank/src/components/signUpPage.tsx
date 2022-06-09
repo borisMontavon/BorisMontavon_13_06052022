@@ -1,8 +1,6 @@
 import { useAppSelector, useAppDispatch } from "../app/hooks";
 import { selectIsSuccessful, selectErrorMessage, selectHasErrorMessage, setHasErrorMessage, setErrorMessage, signUpAsync } from "../features/signUp/signUpSlice";
-
 import { useState, useEffect } from "react";
-
 import { Navigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
