@@ -13,8 +13,8 @@ schemes:
 
 
 paths:
-  /user/profile/transactions:
-    post:
+  /user/account/{accountId}/transactions:
+    get:
       security:
         - Bearer: []
       tags:
@@ -24,6 +24,11 @@ paths:
       produces:
         - "application/json"
       parameters:
+        - in: "path"
+          name: "accountId"
+          description: "Id of the account of the user"
+          required: true
+          type: "string"
         - in: "header"
           name: "Authorization"
           description: "Attach Bearer JWT token"
@@ -50,8 +55,8 @@ paths:
             $ref: '#/definitions/ErrorModel'
           
           
-  /user/profile/transaction:
-    post:
+  /user/transaction/{transactionId}:
+    get:
       security:
           - Bearer: []
       tags:
@@ -61,17 +66,16 @@ paths:
       produces:
         - "application/json"
       parameters:
+        - in: "path"
+          name: "transactionId"
+          description: "Id of the transaction we want to fetch"
+          required: true
+          type: "string"
         - in: "header"
           name: "Authorization"
           description: "Attach Bearer JWT token"
           required: true
           type: "string"
-        - in: "body"
-          name: "body"
-          description: "Id of transaction to fetch"
-          required: true
-          schema:
-            $ref: '#/definitions/GetTransactionParameters'
       responses:
         200: 
           description: "Successful operation"
@@ -86,7 +90,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorModel'
     
-    put:
+    patch:
       security:
           - Bearer: []
       tags:
@@ -97,6 +101,11 @@ paths:
       produces:
         - "application/json"
       parameters:
+        - in: "path"
+          name: "transactionId"
+          description: "Id of the transaction we want to fetch"
+          required: true
+          type: "string"
         - in: "header"
           name: "Authorization"
           description: "Attach Bearer JWT token"
@@ -139,17 +148,9 @@ definitions:
       endDate:
         type: "string"
         
-  GetTransactionParameters:
-    type: "object"
-    properties:
-      id:
-        type: "string"
-        
   UpdateTransactionParameters:
     type: "object"
     properties:
-      id:
-        type: "string"
       category:
         type: "string"
       notes:
@@ -180,8 +181,6 @@ definitions:
     properties:
       status:
         type: "number"
-      errArg:
-        type: "string"
       transactions:
         type: "array"
         items:
@@ -192,8 +191,6 @@ definitions:
     properties:
       status:
         type: "number"
-      errArg:
-        type: "string"
       transaction:
         type: "object"
         properties:
@@ -221,3 +218,4 @@ definitions:
         type: "number"
       errArg:
         type: "string"
+  
