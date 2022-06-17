@@ -236,7 +236,7 @@ body {
   background-color: #fff;
   width: 80%;
   margin: 0 auto;
-  flex-direction: column;
+  flex-direction: row;
   padding: 1.5rem;
   box-sizing: border-box;
   text-align: left;
@@ -321,7 +321,6 @@ body {
   padding: 8px;
   font-size: 1.1rem;
   font-weight: bold;
-  margin-top: 1rem;
   border-color: #00bc77;
   background-color: #00bc77;
   color: #fff;

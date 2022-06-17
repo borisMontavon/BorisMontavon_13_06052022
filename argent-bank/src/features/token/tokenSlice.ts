@@ -36,9 +36,6 @@ export const tokenSlice = createSlice({
     name: "token",
     initialState,
     reducers: {
-        setToken: (state, action: PayloadAction<string>) => {
-            state.token = action.payload;
-        },
         resetToken: (state) => {
             state.token = "";
             cookies.remove("jwtToken");
@@ -88,7 +85,7 @@ export const tokenSlice = createSlice({
 });
 
 // Export of actions (reducer) that allow us to dispatch them
-export const { setToken, resetToken, setHasErrorMessage } = tokenSlice.actions;
+export const { resetToken, setHasErrorMessage } = tokenSlice.actions;
 
 // Exports of the selector that allow us to access state
 export const selectToken = (state: RootState) => state.token.token;

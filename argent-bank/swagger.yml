@@ -7,10 +7,9 @@ info:
 host: "localhost:3001"
 basePath: "/api/v1"
 tags:
-- name: "User transactions module"
+  - name: "User transactions module"
 schemes:
-- "http"
-
+  - "http"
 
 paths:
   /user/account/{accountId}/transactions:
@@ -39,26 +38,25 @@ paths:
           description: "Start and end date for fetched transactions"
           required: true
           schema:
-            $ref: '#/definitions/GetTransactionsParameters'
+            $ref: "#/definitions/GetTransactionsParameters"
       responses:
-        200: 
+        200:
           description: "Successful operation"
           schema:
-            $ref: '#/definitions/TransactionsResponse'
+            $ref: "#/definitions/TransactionsResponse"
         400:
           description: "Invalid data sent to API"
           schema:
-            $ref: '#/definitions/ErrorModel'
+            $ref: "#/definitions/ErrorModel"
         500:
           description: "Internal server error"
           schema:
-            $ref: '#/definitions/ErrorModel'
-          
-          
+            $ref: "#/definitions/ErrorModel"
+
   /user/transaction/{transactionId}:
     get:
       security:
-          - Bearer: []
+        - Bearer: []
       tags:
         - "User transactions module"
       summary: "Check details of a single transaction"
@@ -77,22 +75,22 @@ paths:
           required: true
           type: "string"
       responses:
-        200: 
+        200:
           description: "Successful operation"
           schema:
-            $ref: '#/definitions/TransactionResponse'
+            $ref: "#/definitions/TransactionResponse"
         400:
           description: "Invalid data sent to API"
           schema:
-            $ref: '#/definitions/ErrorModel'
+            $ref: "#/definitions/ErrorModel"
         500:
           description: "Internal server error"
           schema:
-            $ref: '#/definitions/ErrorModel'
-    
+            $ref: "#/definitions/ErrorModel"
+
     patch:
       security:
-          - Bearer: []
+        - Bearer: []
       tags:
         - "User transactions module"
       summary: "Modify informations of a single transaction"
@@ -103,7 +101,7 @@ paths:
       parameters:
         - in: "path"
           name: "transactionId"
-          description: "Id of the transaction we want to fetch"
+          description: "Id of the transaction we want to edit"
           required: true
           type: "string"
         - in: "header"
@@ -116,28 +114,26 @@ paths:
           description: "Data to update in a transaction"
           required: true
           schema:
-            $ref: '#/definitions/UpdateTransactionParameters'
+            $ref: "#/definitions/UpdateTransactionParameters"
       responses:
-        200: 
+        200:
           description: "Successful operation"
           schema:
-            $ref: '#/definitions/TransactionResponse'
+            $ref: "#/definitions/TransactionResponse"
         400:
           description: "Invalid data sent to API"
           schema:
-            $ref: '#/definitions/ErrorModel'
+            $ref: "#/definitions/ErrorModel"
         500:
           description: "Internal server error"
           schema:
-            $ref: '#/definitions/ErrorModel'
-
+            $ref: "#/definitions/ErrorModel"
 
 securityDefinitions:
   Bearer:
     type: "apiKey"
     name: "Authorization"
     in: "header"
-    
 
 definitions:
   GetTransactionsParameters:
@@ -147,7 +143,7 @@ definitions:
         type: "string"
       endDate:
         type: "string"
-        
+
   UpdateTransactionParameters:
     type: "object"
     properties:
@@ -155,7 +151,7 @@ definitions:
         type: "string"
       notes:
         type: "string"
-  
+
   TransactionModel:
     type: "object"
     properties:
@@ -175,7 +171,7 @@ definitions:
         type: "string"
       notes:
         type: "string"
-        
+
   TransactionsResponse:
     type: "object"
     properties:
@@ -185,7 +181,7 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/TransactionModel"
-        
+
   TransactionResponse:
     type: "object"
     properties:
@@ -210,7 +206,7 @@ definitions:
             type: "string"
           notes:
             type: "string"
-            
+
   ErrorModel:
     type: "object"
     properties:
@@ -218,4 +214,3 @@ definitions:
         type: "number"
       errArg:
         type: "string"
-  

@@ -30,13 +30,13 @@ export function Nav() {
     // If the login is successful, we render the name of the user and the "Sign out" button that will allow us to log out
     if (token) {
         signUpButton = undefined;
-        profilButton = <Link className="main-nav-item" to="user"><FontAwesomeIcon icon={faUserCircle} className="main-nav-item-logo" />{user}</Link>;
+        profilButton = <Link className="main-nav-item" to="/user"><FontAwesomeIcon icon={faUserCircle} className="main-nav-item-logo" />{user}</Link>;
         logButton = <Link className="main-nav-item" to="/" onClick={logOut}><FontAwesomeIcon icon={faSignOut} className="main-nav-item-logo" />Sign out</Link>
     // Else, we render the same "Sign in" button and the "Sign up" button that will allow us to create a new user if necessary
     } else {
-        signUpButton = <Link className="main-nav-item" to="signUp"><FontAwesomeIcon icon={faUserPlus} className="main-nav-item-logo" />Sign up</Link>
+        signUpButton = <Link className="main-nav-item" to="/signUp"><FontAwesomeIcon icon={faUserPlus} className="main-nav-item-logo" />Sign up</Link>
         profilButton = undefined;
-        logButton = <Link className="main-nav-item" to="login"><FontAwesomeIcon icon={faSignIn} className="main-nav-item-logo" />Sign in</Link>
+        logButton = <Link className="main-nav-item" to="/login"><FontAwesomeIcon icon={faSignIn} className="main-nav-item-logo" />Sign in</Link>
     }
 
     return (

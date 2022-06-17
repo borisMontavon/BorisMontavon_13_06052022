@@ -24,11 +24,8 @@ export function AccountSection() {
     );
 
     return (
-        <section className="account">
+        <section>
             {transactions}
-            <div className="account-content-wrapper cta">
-                <button className="transaction-button">View transactions</button>
-            </div>
         </section>
     );
 }

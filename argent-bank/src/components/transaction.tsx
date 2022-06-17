@@ -8,10 +8,15 @@ interface TransactionProps {
 
 export function Transaction({transactionTitle, transactionAmount, transactionAmountDescription}:TransactionProps) {
     return (
-        <div className="account-content-wrapper">
-            <h3 className="account-title">{transactionTitle}</h3>
-            <p className="account-amount">{transactionAmount}</p>
-            <p className="account-amount-description">{transactionAmountDescription}</p>
+        <div className="account">
+            <div className="account-content-wrapper">
+                <h3 className="account-title">{transactionTitle}</h3>
+                <p className="account-amount">{transactionAmount}</p>
+                <p className="account-amount-description">{transactionAmountDescription}</p>
+            </div>
+            <div className="account-content-wrapper cta">
+                <button className="transaction-button">View transactions</button>
+            </div>
         </div>
     );
 }
