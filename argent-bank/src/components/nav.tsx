@@ -1,5 +1,5 @@
 import { useAppSelector, useAppDispatch } from "../app/hooks";
-import { selectUserFirstName, resetUser } from "../features/user/userSlice";
+import { selectUserFirstName, resetUser, profileAsync } from "../features/user/userSlice";
 import { resetToken, selectToken } from "../features/token/tokenSlice";
 import { setIsSuccessful } from "../features/signUp/signUpSlice";
 import { Link } from "react-router-dom";
@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignIn, faSignOut, faUserCircle, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import logo from "../assets/img/argentBankLogo.png";
+import { useEffect } from "react";
 
 export function Nav() {
     // State from Redux to display the error message, or to navigate to the next page if login is successful
@@ -22,6 +23,17 @@ export function Nav() {
         dispatch(resetToken());
         dispatch(setIsSuccessful(false));
     }
+
+    // Fetch the user informations thanks to the token previously saved
+    useEffect(() => {
+        async function getData() {
+            if (token) {
+                dispatch(profileAsync(token));
+            }
+        }
+
+        getData();
+    }, [dispatch, token]);
 
     let logButton;
     let profilButton;
@@ -49,7 +61,7 @@ export function Nav() {
                 />
                 <h1 className="sr-only">Argent Bank</h1>
             </Link>
-            <div>
+            <div className="main-nav-items">
                 {signUpButton}
                 {profilButton}
                 {logButton}

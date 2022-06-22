@@ -33,12 +33,6 @@ paths:
           description: "Attach Bearer JWT token"
           required: true
           type: "string"
-        - in: "body"
-          name: "body"
-          description: "Start and end date for fetched transactions"
-          required: true
-          schema:
-            $ref: "#/definitions/GetTransactionsParameters"
       responses:
         200:
           description: "Successful operation"
@@ -136,14 +130,6 @@ securityDefinitions:
     in: "header"
 
 definitions:
-  GetTransactionsParameters:
-    type: "object"
-    properties:
-      startDate:
-        type: "string"
-      endDate:
-        type: "string"
-
   UpdateTransactionParameters:
     type: "object"
     properties:
